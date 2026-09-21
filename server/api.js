@@ -13,7 +13,8 @@ function readQuery(query, name) {
 // 概览用的一块数据：几个数字、最近打完的几场、积分榜前三
 function summary() {
   const data = load();
-  const table = computeTable({}).table;
+  const standings = computeTable({});
+  const table = standings.table;
   const played = data.matches.filter((item) => item.status === '已赛');
   const recent = played
     .slice()
@@ -45,6 +46,7 @@ function summary() {
     playedRounds: new Set(played.map((item) => item.round)).size,
     totalRounds: Math.max(...data.matches.map((item) => item.round), 0),
     topThree: table.slice(0, 3),
+    rankRules: standings.rankRules,
     recent,
   };
 }

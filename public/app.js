@@ -22,7 +22,7 @@ const VIEW_META = {
   teams: { title: '球队', sub: '登记参赛球队、简称、主场与档位', action: '新增球队' },
   venues: { title: '场地', sub: '登记比赛场地、容量与可用日', action: '新增场地' },
   matches: { title: '赛程', sub: '按轮次查看对阵，登记比分后积分随之变化', action: '新增赛程' },
-  table: { title: '积分榜', sub: '按积分、净胜球、进球依次排序', action: '' },
+  table: { title: '积分榜', sub: '积分相同依次比净胜球、进球数、交手结果、客场进球，仍相同按队名', action: '' },
 };
 
 const el = (id) => document.getElementById(id);
@@ -144,6 +144,7 @@ function renderOverview() {
     ? data.topThree.map((row) => `<li>
         <span class="rank-badge">${row.rank}</span>
         <span>${escapeHtml(row.name)}</span>
+        ${rankTag(row, data.rankRules)}
         <span class="muted">净胜 ${row.goalDiff}</span>
         <span class="pts">${row.points} 分</span>
       </li>`).join('')
@@ -215,12 +216,22 @@ function renderMatches() {
   el('match-empty').classList.toggle('show', state.matches.length === 0);
 }
 
+// 名次旁的判定标签：常驻短标签，悬停气泡说明这一名次靠哪一级、具体数据是什么
+function rankTag(row, rules) {
+  if (!row.rankRule) return '';
+  const pool = rules || (state.standings && state.standings.rankRules) || {};
+  const label = (pool[row.rankRule] && pool[row.rankRule].label) || row.rankRule;
+  const tip = `${row.rankReason}${row.rankDetail ? `（${row.rankDetail}）` : ''}`;
+  return `<span class="rank-rule rule-${escapeHtml(row.rankRule)}" data-tip="${escapeHtml(tip)}">${escapeHtml(label)}</span>`;
+}
+
 function renderStandings() {
   const data = state.standings;
   if (!data) return;
   el('table-hint').textContent = `${data.season}　已打 ${data.playedMatches} 场，待赛 ${data.pendingMatches} 场，延期 ${data.postponedMatches} 场`;
+  el('table-rules').innerHTML = `并列时依次比较：${Object.values(data.rankRules).map((item) => `<span class="chain-step">${item.level}. ${escapeHtml(item.label)}</span>`).join('<i>→</i>')}`;
   el('table-rows').innerHTML = data.table.map((row) => `<tr>
-      <td class="num">${row.rank}</td>
+      <td class="num"><div class="rank-cell"><b>${row.rank}</b>${rankTag(row)}</div></td>
       <td>${escapeHtml(row.name)}</td>
       <td>${row.played}</td>
       <td>${row.win}</td>

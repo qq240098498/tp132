@@ -161,6 +161,35 @@ table.grid.standings td:nth-child(n+3) { font-family: Consolas, "Courier New", m
 .pill.late { background: var(--amber-soft); color: var(--amber); }
 .pill.off { background: var(--danger-soft); color: var(--danger); }
 .muted { color: var(--ink-soft); }
+
+/* 积分榜：名次格与并列判定标签 */
+.rank-cell { display: inline-flex; align-items: center; gap: 7px; }
+.rank-cell b { font-family: Consolas, "Courier New", monospace; }
+.rank-rule {
+  position: relative; display: inline-block; padding: 1px 8px; border-radius: 999px;
+  font-size: 11px; font-weight: 600; line-height: 1.7; cursor: default; white-space: nowrap;
+}
+.rank-rule.rule-points { background: var(--amber-soft); color: var(--amber); }
+.rank-rule.rule-goalDiff { background: var(--brand-soft); color: var(--brand); }
+.rank-rule.rule-goalsFor { background: #e6eef9; color: #2b6099; }
+.rank-rule.rule-h2h { background: #f0ebfa; color: #6b4bb8; }
+.rank-rule.rule-awayGoals { background: #e5f5f8; color: #0e6f86; }
+.rank-rule.rule-name { background: #eef2f7; color: var(--ink-soft); }
+
+/* 悬停气泡：写全判定规则与具体数据 */
+.rank-rule::after {
+  content: attr(data-tip); position: absolute; left: 0; bottom: calc(100% + 6px); z-index: 5;
+  background: var(--rail); color: #fff; font-size: 11.5px; font-weight: 400; line-height: 1.5;
+  padding: 6px 9px; border-radius: 8px; white-space: nowrap;
+  box-shadow: 0 4px 14px rgba(20, 30, 45, .22);
+  opacity: 0; pointer-events: none; transform: translateY(3px); transition: opacity .12s, transform .12s;
+}
+.rank-rule:hover::after { opacity: 1; transform: translateY(0); }
+
+.rank-chain { margin: 0 0 12px; font-size: 12.5px; color: var(--ink-soft); display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.rank-chain .chain-step { color: var(--ink); background: #f2f5f9; border-radius: 6px; padding: 1px 8px; }
+.rank-chain i { font-style: normal; color: var(--ink-soft); }
+#table-legend { margin: 12px 0 0; }
 .empty { display: none; color: var(--ink-soft); font-size: 13px; padding: 10px 2px; }
 .empty.show { display: block; }
 
