@@ -22,7 +22,7 @@ const VIEW_META = {
   teams: { title: '球队', sub: '登记参赛球队、简称、主场与档位', action: '新增球队' },
   venues: { title: '场地', sub: '登记比赛场地、容量与可用日', action: '新增场地' },
   matches: { title: '赛程', sub: '按轮次查看对阵，登记比分后积分随之变化', action: '新增赛程' },
-  table: { title: '积分榜', sub: '按积分、净胜球、进球依次排序', action: '' },
+  table: { title: '积分榜', sub: '并列时按净胜球、进球数、交手结果、客场进球逐级比，分出高低即停', action: '' },
 };
 
 const el = (id) => document.getElementById(id);
@@ -219,8 +219,19 @@ function renderStandings() {
   const data = state.standings;
   if (!data) return;
   el('table-hint').textContent = `${data.season}　已打 ${data.playedMatches} 场，待赛 ${data.pendingMatches} 场，延期 ${data.postponedMatches} 场`;
-  el('table-rows').innerHTML = data.table.map((row) => `<tr>
-      <td class="num">${row.rank}</td>
+  el('table-rows').innerHTML = data.table.map((row) => {
+    // 名次旁写明这一名次是靠哪一级规则定下来的；榜首与没有并列时只需积分定级
+    const tied = row.rankReason && row.rankReason !== 'points';
+    const badge = tied
+      ? `<span class="rank-reason reason-${escapeHtml(row.rankReason)}" title="${escapeHtml(row.rankReasonNote || `与上一名积分相同，靠${row.rankReasonLabel}分出先后`)}">${escapeHtml(row.rankReasonLabel)}</span>`
+      : '';
+    const note = tied && row.rankReasonNote ? `<p class="rank-note">${escapeHtml(row.rankReasonNote)}</p>` : '';
+    return `<tr${tied ? ' class="tied"' : ''}>
+      <td class="num">
+        <span class="rank-num">${row.rank}</span>
+        ${badge}
+        ${note}
+      </td>
       <td>${escapeHtml(row.name)}</td>
       <td>${row.played}</td>
       <td>${row.win}</td>
@@ -230,7 +241,13 @@ function renderStandings() {
       <td>${row.goalsAgainst}</td>
       <td>${row.goalDiff > 0 ? `+${row.goalDiff}` : row.goalDiff}</td>
       <td><strong>${row.points}</strong></td>
-    </tr>`).join('');
+    </tr>`;
+  }).join('');
+
+  const legend = (data.tieRules || [])
+    .map((rule, index) => `<span class="tie-step"><em>${index + 1}</em>${escapeHtml(rule.label)}</span>`)
+    .join('');
+  el('table-rules').innerHTML = `积分相同的两队依次比较：${legend} —— 某一级分出高低即停止，后面的规则不再翻案；五级仍打平按队名排列`;
 }
 
 /* 抽屉与表单 */

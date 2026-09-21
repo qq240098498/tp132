@@ -160,6 +160,38 @@ table.grid.standings td:nth-child(n+3) { font-family: Consolas, "Courier New", m
 .pill.wait { background: #eef2f7; color: var(--ink-soft); }
 .pill.late { background: var(--amber-soft); color: var(--amber); }
 .pill.off { background: var(--danger-soft); color: var(--danger); }
+
+/* 积分榜并列定级 */
+.rank-reason {
+  display: inline-block; margin-left: 6px; padding: 0 7px; border-radius: 999px;
+  font-size: 11px; font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+  vertical-align: middle; cursor: help; white-space: nowrap;
+}
+.reason-goalDiff { background: var(--brand-soft); color: var(--brand); }
+.reason-goalsFor { background: #e8f0fe; color: #2b5a9e; }
+.reason-h2h { background: var(--amber-soft); color: var(--amber); }
+.reason-awayGoals { background: #f1ecfb; color: #6b46a8; }
+.reason-name { background: #eef2f7; color: var(--ink-soft); }
+tr.tied td:first-child { vertical-align: top; }
+.rank-note {
+  margin: 4px 0 0; font-size: 11.5px; line-height: 1.45;
+  color: var(--ink-soft); font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+  max-width: 260px;
+}
+.tie-rules {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px;
+  margin: 12px 2px 0; font-size: 12px; color: var(--ink-soft);
+}
+.tie-rules .tie-step {
+  display: inline-flex; align-items: center; gap: 5px;
+  background: #fafbfd; border: 1px solid var(--line); border-radius: 999px;
+  padding: 1px 9px 1px 3px;
+}
+.tie-rules .tie-step em {
+  font-style: normal; width: 16px; height: 16px; border-radius: 50%;
+  background: var(--rail-soft); color: #fff; font-size: 10.5px;
+  display: inline-flex; align-items: center; justify-content: center;
+}
 .muted { color: var(--ink-soft); }
 .empty { display: none; color: var(--ink-soft); font-size: 13px; padding: 10px 2px; }
 .empty.show { display: block; }
